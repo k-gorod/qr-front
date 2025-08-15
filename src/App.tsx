@@ -1,24 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [ inputValue, setInputValue ] = useState('');
+  const [ imgUrl, setImgUrl ] = useState<string | null>('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onInputChange: React.ChangeEventHandler<HTMLInputElement>  = (event) => {
+    setInputValue(event.target.value)
+  }
+
+  const onOkButtonClick = async () => {
+    if(!inputValue) {
+      setImgUrl(null);
+
+      return;
+    }
+
+    setIsLoading(true);
+
+    const response = await fetch(`https://qr-generation-5kyy.onrender.com/generate?link=${inputValue}`);
+
+    const blob = await response.blob();
+
+    const imgUrl = URL.createObjectURL(blob);
+
+    setImgUrl(imgUrl)
+
+    setIsLoading(false);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="main_wrapper">
+      <input onChange={onInputChange} value={inputValue}/>
+      <button onClick={onOkButtonClick}>Ok</button>
+      {
+        isLoading && <div>Loading</div> 
+      }
+      {
+        imgUrl ? (
+          <>
+            <img src={imgUrl} />
+            <a href={imgUrl} download={`${inputValue}.png`}>Download</a>
+          </>
+        ) : null
+      }
+
     </div>
   );
 }
