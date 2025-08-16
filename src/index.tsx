@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 
+
+fetch('https://qr-generation-5kyy.onrender.com/')
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
